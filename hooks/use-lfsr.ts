@@ -6,14 +6,15 @@ import { useState, useCallback, useRef, useEffect } from "react";
  * LFSR (Linear Feedback Shift Register) Hook
  *
  * Implements the polynomial: x^31 + x^6 + x^5 + x^1 + 1
- * Tap positions (0-indexed): bits 31, 6, 5, 1
- * The XOR of taps feeds back into position 0 after shifting right.
+ * Tap positions (0-indexed): bits 1, 5, 6, 31
  *
- * The register is 32 bits wide. On each clock cycle:
- *   1. Read taps at positions 1, 5, 6, and 31
- *   2. XOR them together to get the feedback bit
- *   3. Shift the entire register right by 1 (output = bit 0)
- *   4. Place the feedback bit at position 31
+ * Data enters at bit 0 and exits at bit 31.
+ * On each clock cycle:
+ *   1. The output bit is bit 31 (shifted out to the left)
+ *   2. Read taps at positions 1, 5, 6, and 31
+ *   3. XOR them together to get the feedback bit
+ *   4. Shift the entire register LEFT by 1
+ *   5. Place the feedback bit at position 0
  */
 
 export const LFSR_TAPS = [1, 5, 6, 31] as const;
@@ -28,7 +29,13 @@ export function toBitArray(value: number): number[] {
   return bits;
 }
 
-/** Perform one LFSR step and return { newState, outputBit, feedbackBit } */
+/**
+ * Perform one LFSR step:
+ *   - Output bit = bit 31 (MSB, exits left)
+ *   - Feedback = XOR of taps
+ *   - Shift left by 1
+ *   - Feedback enters at bit 0
+ */
 export function lfsrStep(state: number): {
   newState: number;
   outputBit: number;
@@ -38,17 +45,17 @@ export function lfsrStep(state: number): {
   const tapValues = LFSR_TAPS.map((pos) => (state >>> pos) & 1);
   const feedbackBit = tapValues.reduce((a, b) => a ^ b, 0);
 
-  // Output bit is bit 0 (the one shifted out)
-  const outputBit = state & 1;
+  // Output bit is bit 31 (the one shifted out to the left)
+  const outputBit = (state >>> 31) & 1;
 
-  // Shift right by 1
-  let newState = state >>> 1;
+  // Shift left by 1
+  let newState = state << 1;
 
-  // Place feedback at position 31
+  // Place feedback at position 0
   if (feedbackBit) {
-    newState |= 1 << 31;
+    newState |= 1;
   } else {
-    newState &= ~(1 << 31);
+    newState &= ~1;
   }
 
   // Force unsigned interpretation
@@ -66,8 +73,9 @@ export function useLfsr(initialSeed?: number) {
   const [stepCount, setStepCount] = useState(0);
   const [lastFeedback, setLastFeedback] = useState<number | null>(null);
   const [lastOutput, setLastOutput] = useState<number | null>(null);
+  const [outputStream, setOutputStream] = useState<number[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [speed, setSpeed] = useState(500); // ms between steps
+  const [speed, setSpeed] = useState(500);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const step = useCallback(() => {
@@ -76,6 +84,11 @@ export function useLfsr(initialSeed?: number) {
       setLastFeedback(feedbackBit);
       setLastOutput(outputBit);
       setStepCount((c) => c + 1);
+      setOutputStream((s) => {
+        const next = [...s, outputBit];
+        if (next.length > 64) next.shift();
+        return next;
+      });
       return newState;
     });
   }, []);
@@ -85,6 +98,7 @@ export function useLfsr(initialSeed?: number) {
     setStepCount(0);
     setLastFeedback(null);
     setLastOutput(null);
+    setOutputStream([]);
     setIsRunning(false);
   }, [seed]);
 
@@ -92,7 +106,6 @@ export function useLfsr(initialSeed?: number) {
     setIsRunning((prev) => !prev);
   }, []);
 
-  // Auto-run interval
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(step, speed);
@@ -111,6 +124,7 @@ export function useLfsr(initialSeed?: number) {
     stepCount,
     lastFeedback,
     lastOutput,
+    outputStream,
     isRunning,
     speed,
     step,

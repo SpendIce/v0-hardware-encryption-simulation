@@ -1,14 +1,15 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Play, Pause, RotateCcw, ChevronRight, Zap } from "lucide-react";
-import { useLfsr, LFSR_TAPS, LFSR_SIZE, toBitArray } from "@/hooks/use-lfsr";
+import { Play, Pause, RotateCcw, ChevronRight } from "lucide-react";
+import { useLfsr, LFSR_TAPS, LFSR_SIZE } from "@/hooks/use-lfsr";
 
 /**
  * LFSR Visualizer
  *
- * Shows the 32-bit register as individual cells, highlights tap positions,
- * animates the shift operation, and displays the XOR feedback logic.
+ * Shows the 32-bit register as individual cells.
+ * Data enters at bit 0 (right), exits at bit 31 (left).
+ * Feedback from XOR of taps goes back to bit 0.
  */
 export default function LfsrVisualizer() {
   const lfsr = useLfsr();
@@ -24,53 +25,52 @@ export default function LfsrVisualizer() {
   const xorResult = tapBitValues.reduce((a, b) => a ^ b, 0);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Header */}
-      <div className="chip-card glow-green">
-        <div className="flex items-center gap-3 mb-2">
-          <Zap className="h-5 w-5 text-neon-green" />
-          <h2 className="text-lg font-bold text-neon-green text-glow-green">
-            LFSR Engine - 32-bit Register
-          </h2>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {"Polinomio: x\u00B3\u00B9 + x\u2076 + x\u2075 + x\u00B9 + 1 | Taps en posiciones: 1, 5, 6, 31"}
+    <section className="flex flex-col gap-5">
+      {/* Section header */}
+      <div>
+        <h2 className="text-lg font-bold text-foreground">
+          LFSR - Registro de Desplazamiento con Retroalimentacion Lineal
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          {"Polinomio: x\u00B3\u00B9 + x\u2076 + x\u2075 + x\u00B9 + 1  |  Taps: 1, 5, 6, 31  |  Entrada: bit 0  |  Salida: bit 31"}
         </p>
       </div>
 
       {/* Register visualization */}
-      <div className="chip-card overflow-x-auto">
-        <div className="flex items-center gap-1 mb-2">
-          <span className="text-xs text-muted-foreground mr-2">MSB</span>
-          <div className="flex gap-0.5">
-            {/* Display bits from MSB (31) to LSB (0) */}
+      <div className="rounded-lg border border-border bg-card p-4 overflow-x-auto">
+        <div className="flex items-center gap-1 mb-1">
+          <span className="text-xs text-muted-foreground font-bold mr-1 w-16 text-right shrink-0">
+            {"Salida <-"}
+          </span>
+          <div className="flex gap-px">
+            {/* Display bits from MSB (31) to LSB (0) -- left to right = bit 31 down to bit 0 */}
             {Array.from({ length: LFSR_SIZE })
               .map((_, i) => LFSR_SIZE - 1 - i)
               .map((bitIndex) => {
-                const isTap = LFSR_TAPS.includes(bitIndex as 1 | 5 | 6 | 31);
+                const isTap = (LFSR_TAPS as readonly number[]).includes(bitIndex);
                 const bitVal = bits[bitIndex];
                 return (
-                  <div key={bitIndex} className="flex flex-col items-center gap-1">
-                    {/* Tap indicator */}
+                  <div key={bitIndex} className="flex flex-col items-center">
+                    {/* Tap marker */}
                     <div
-                      className={`h-1.5 w-8 rounded-full transition-colors ${
-                        isTap ? "bg-neon-amber" : "bg-transparent"
+                      className={`h-1 w-7 rounded-full mb-0.5 ${
+                        isTap ? "bg-orange-400" : "bg-transparent"
                       }`}
                     />
                     {/* Bit cell */}
                     <div
                       key={`${bitIndex}-${animKey}`}
                       className={`
-                        flex h-8 w-8 items-center justify-center rounded text-xs font-bold 
-                        transition-all duration-200 border
+                        flex h-7 w-7 items-center justify-center text-xs font-bold 
+                        border transition-colors
                         ${
                           isTap
                             ? bitVal
-                              ? "border-neon-amber bg-neon-amber/20 text-neon-amber glow-amber"
-                              : "border-neon-amber/50 bg-secondary text-neon-amber/60"
+                              ? "border-orange-400 bg-orange-50 text-orange-700"
+                              : "border-orange-300 bg-background text-orange-400"
                             : bitVal
-                            ? "border-neon-green bg-neon-green/20 text-neon-green glow-green"
-                            : "border-border bg-secondary text-muted-foreground"
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-background text-muted-foreground"
                         }
                         ${bitVal ? "bit-pulse" : ""}
                       `}
@@ -79,8 +79,8 @@ export default function LfsrVisualizer() {
                     </div>
                     {/* Position label */}
                     <span
-                      className={`text-[10px] ${
-                        isTap ? "text-neon-amber font-bold" : "text-muted-foreground"
+                      className={`text-[9px] mt-0.5 ${
+                        isTap ? "text-orange-500 font-bold" : "text-muted-foreground"
                       }`}
                     >
                       {bitIndex}
@@ -89,27 +89,29 @@ export default function LfsrVisualizer() {
                 );
               })}
           </div>
-          <span className="text-xs text-muted-foreground ml-2">LSB</span>
+          <span className="text-xs text-muted-foreground font-bold ml-1 w-20 shrink-0">
+            {"-> Entrada"}
+          </span>
         </div>
       </div>
 
-      {/* XOR Feedback visualization */}
-      <div className="chip-card glow-cyan">
-        <h3 className="text-sm font-bold text-neon-cyan text-glow-cyan mb-3">
-          XOR Feedback Logic
+      {/* Feedback XOR */}
+      <div className="rounded-lg border border-border bg-card p-4">
+        <h3 className="text-sm font-bold text-foreground mb-3">
+          Retroalimentacion XOR {"-> bit[0]"}
         </h3>
         <div className="flex flex-wrap items-center gap-2 font-mono text-sm">
           {LFSR_TAPS.map((tap, i) => (
             <span key={tap} className="flex items-center gap-2">
               <span className="flex flex-col items-center">
-                <span className="text-[10px] text-neon-amber">bit[{tap}]</span>
+                <span className="text-[10px] text-orange-500">bit[{tap}]</span>
                 <span
                   className={`
-                    flex h-8 w-8 items-center justify-center rounded border font-bold
+                    flex h-7 w-7 items-center justify-center rounded border font-bold text-xs
                     ${
                       tapBitValues[i]
-                        ? "border-neon-amber bg-neon-amber/20 text-neon-amber"
-                        : "border-border bg-secondary text-muted-foreground"
+                        ? "border-orange-400 bg-orange-50 text-orange-700"
+                        : "border-border bg-background text-muted-foreground"
                     }
                   `}
                 >
@@ -117,54 +119,52 @@ export default function LfsrVisualizer() {
                 </span>
               </span>
               {i < LFSR_TAPS.length - 1 && (
-                <span className="text-neon-cyan font-bold text-lg">{"^"}</span>
+                <span className="text-primary font-bold">{"^"}</span>
               )}
             </span>
           ))}
-          <span className="text-neon-green font-bold text-lg mx-2">{"="}</span>
+          <span className="text-foreground font-bold mx-1">{"="}</span>
           <span className="flex flex-col items-center">
-            <span className="text-[10px] text-neon-green">feedback</span>
+            <span className="text-[10px] text-primary">feedback</span>
             <span
               className={`
-                flex h-8 w-8 items-center justify-center rounded border font-bold
+                flex h-7 w-7 items-center justify-center rounded border font-bold text-xs
                 ${
                   xorResult
-                    ? "border-neon-green bg-neon-green/20 text-neon-green glow-green"
-                    : "border-border bg-secondary text-muted-foreground"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-background text-muted-foreground"
                 }
               `}
             >
               {xorResult}
             </span>
           </span>
-          <ChevronRight className="h-4 w-4 text-neon-green mx-1" />
-          <span className="text-xs text-neon-green">{"-> bit[31]"}</span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground mx-1" />
+          <span className="text-xs text-primary font-bold">{"bit[0]"}</span>
         </div>
       </div>
 
-      {/* Status panel */}
-      <div className="flex flex-wrap gap-4">
-        <div className="chip-card flex-1 min-w-[140px]">
-          <span className="text-xs text-muted-foreground">Ciclos de reloj</span>
-          <p className="text-2xl font-bold text-neon-green text-glow-green">
-            {lfsr.stepCount}
-          </p>
+      {/* Status row */}
+      <div className="flex flex-wrap gap-3">
+        <div className="rounded-lg border border-border bg-card px-4 py-2 flex-1 min-w-[120px]">
+          <span className="text-[10px] text-muted-foreground block">Ciclos</span>
+          <p className="text-xl font-bold text-foreground">{lfsr.stepCount}</p>
         </div>
-        <div className="chip-card flex-1 min-w-[140px]">
-          <span className="text-xs text-muted-foreground">Ultimo bit de salida</span>
-          <p className="text-2xl font-bold text-neon-cyan text-glow-cyan">
+        <div className="rounded-lg border border-border bg-card px-4 py-2 flex-1 min-w-[120px]">
+          <span className="text-[10px] text-muted-foreground block">Bit salida (bit 31)</span>
+          <p className="text-xl font-bold text-foreground">
             {lfsr.lastOutput !== null ? lfsr.lastOutput : "---"}
           </p>
         </div>
-        <div className="chip-card flex-1 min-w-[140px]">
-          <span className="text-xs text-muted-foreground">Bit de retroalimentacion</span>
-          <p className="text-2xl font-bold text-neon-amber text-glow-amber">
+        <div className="rounded-lg border border-border bg-card px-4 py-2 flex-1 min-w-[120px]">
+          <span className="text-[10px] text-muted-foreground block">Feedback (bit 0)</span>
+          <p className="text-xl font-bold text-foreground">
             {lfsr.lastFeedback !== null ? lfsr.lastFeedback : "---"}
           </p>
         </div>
-        <div className="chip-card flex-1 min-w-[140px]">
-          <span className="text-xs text-muted-foreground">Hex del registro</span>
-          <p className="text-lg font-bold text-neon-green text-glow-green break-all">
+        <div className="rounded-lg border border-border bg-card px-4 py-2 flex-1 min-w-[120px]">
+          <span className="text-[10px] text-muted-foreground block">Registro (hex)</span>
+          <p className="text-base font-bold text-foreground">
             0x{(lfsr.state >>> 0).toString(16).toUpperCase().padStart(8, "0")}
           </p>
         </div>
@@ -175,17 +175,17 @@ export default function LfsrVisualizer() {
         <button
           onClick={handleStep}
           disabled={lfsr.isRunning}
-          className="flex items-center gap-2 rounded-lg border border-neon-green bg-neon-green/10 px-4 py-2 text-sm font-bold text-neon-green transition-all hover:bg-neon-green/20 disabled:opacity-40 disabled:cursor-not-allowed glow-green"
+          className="flex items-center gap-2 rounded-md border border-primary bg-primary/5 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <ChevronRight className="h-4 w-4" />
           Step
         </button>
         <button
           onClick={lfsr.toggleAutoRun}
-          className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-bold transition-all ${
+          className={`flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-bold transition-colors ${
             lfsr.isRunning
-              ? "border-neon-red bg-neon-red/10 text-neon-red hover:bg-neon-red/20 glow-red"
-              : "border-neon-cyan bg-neon-cyan/10 text-neon-cyan hover:bg-neon-cyan/20 glow-cyan"
+              ? "border-destructive bg-destructive/5 text-destructive hover:bg-destructive/10"
+              : "border-primary bg-primary/5 text-primary hover:bg-primary/10"
           }`}
         >
           {lfsr.isRunning ? (
@@ -193,11 +193,11 @@ export default function LfsrVisualizer() {
           ) : (
             <Play className="h-4 w-4" />
           )}
-          {lfsr.isRunning ? "Detener" : "Auto Run"}
+          {lfsr.isRunning ? "Detener" : "Auto"}
         </button>
         <button
           onClick={lfsr.reset}
-          className="flex items-center gap-2 rounded-lg border border-muted-foreground bg-secondary px-4 py-2 text-sm font-bold text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
+          className="flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-bold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         >
           <RotateCcw className="h-4 w-4" />
           Reset
@@ -213,86 +213,45 @@ export default function LfsrVisualizer() {
             step={50}
             value={1050 - lfsr.speed}
             onChange={(e) => lfsr.setSpeed(1050 - Number(e.target.value))}
-            className="w-24 accent-neon-green"
+            className="w-24 accent-primary"
+            aria-label="Velocidad de simulacion"
           />
-          <span className="text-xs text-neon-green w-14 text-right">
+          <span className="text-xs text-muted-foreground w-14 text-right">
             {lfsr.speed}ms
           </span>
         </div>
       </div>
 
-      {/* Output bit stream (last 32 output bits) */}
-      <OutputBitStream lfsr={lfsr} animKey={animKey} />
-    </div>
-  );
-}
-
-/** Shows the last N output bits as a running stream */
-function OutputBitStream({
-  lfsr,
-  animKey,
-}: {
-  lfsr: ReturnType<typeof useLfsr>;
-  animKey: number;
-}) {
-  // We track the output stream by re-running the LFSR from seed
-  // But that's expensive. Instead let's track with a simple ref approach via state.
-  // We'll use a simple accumulator that captures lastOutput each step.
-  const [stream, setStream] = useState<number[]>([]);
-
-  // Subscribe to step changes via animKey
-  const prevAnimKey = useStreamTracker(animKey, lfsr.lastOutput, stream, setStream);
-
-  return (
-    <div className="chip-card">
-      <h3 className="text-sm font-bold text-neon-cyan text-glow-cyan mb-2">
-        Secuencia de salida (ultimos 64 bits)
-      </h3>
-      <div className="flex flex-wrap gap-0.5 font-mono text-xs">
-        {stream.length === 0 ? (
-          <span className="text-muted-foreground">
-            Presiona Step o Auto Run para generar bits...
-          </span>
-        ) : (
-          stream.map((bit, i) => (
-            <span
-              key={`${i}-${bit}`}
-              className={`
-                inline-flex h-5 w-5 items-center justify-center rounded-sm
-                ${
-                  bit
-                    ? "bg-neon-green/20 text-neon-green"
-                    : "bg-secondary text-muted-foreground"
-                }
-                ${i === stream.length - 1 ? "ring-1 ring-neon-green" : ""}
-              `}
-            >
-              {bit}
+      {/* Output bit stream */}
+      <div className="rounded-lg border border-border bg-card p-4">
+        <h3 className="text-sm font-bold text-foreground mb-2">
+          Secuencia de salida (ultimos 64 bits)
+        </h3>
+        <div className="flex flex-wrap gap-px font-mono text-xs">
+          {lfsr.outputStream.length === 0 ? (
+            <span className="text-muted-foreground">
+              Presiona Step o Auto para generar bits...
             </span>
-          ))
-        )}
+          ) : (
+            lfsr.outputStream.map((bit, i) => (
+              <span
+                key={`${i}-${bit}`}
+                className={`
+                  inline-flex h-5 w-5 items-center justify-center rounded-sm text-[10px]
+                  ${
+                    bit
+                      ? "bg-primary/10 text-primary font-bold"
+                      : "bg-secondary text-muted-foreground"
+                  }
+                  ${i === lfsr.outputStream.length - 1 ? "ring-1 ring-primary" : ""}
+                `}
+              >
+                {bit}
+              </span>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
-}
-
-/** Track output stream */
-function useStreamTracker(
-  animKey: number,
-  lastOutput: number | null,
-  stream: number[],
-  setStream: React.Dispatch<React.SetStateAction<number[]>>
-) {
-  const [prevKey, setPrevKey] = useState(animKey);
-
-  if (animKey !== prevKey) {
-    setPrevKey(animKey);
-    if (lastOutput !== null) {
-      const newStream = [...stream, lastOutput];
-      if (newStream.length > 64) newStream.shift();
-      setStream(newStream);
-    }
-  }
-
-  return prevKey;
 }

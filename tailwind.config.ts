@@ -51,12 +51,6 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
-        neon: {
-          green: 'hsl(var(--neon-green))',
-          cyan: 'hsl(var(--neon-cyan))',
-          amber: 'hsl(var(--neon-amber))',
-          red: 'hsl(var(--neon-red))',
-        },
       },
       fontFamily: {
         mono: ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
@@ -76,25 +70,10 @@ const config: Config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'pulse-glow': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.6' },
-        },
-        'slide-right': {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(0)' },
-        },
-        'data-flow': {
-          '0%': { backgroundPosition: '0% 50%' },
-          '100%': { backgroundPosition: '200% 50%' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-        'slide-right': 'slide-right 0.3s ease-out',
-        'data-flow': 'data-flow 2s linear infinite',
       },
     },
   },

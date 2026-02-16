@@ -10,37 +10,35 @@
 
 @layer base {
   :root {
-    /* Cyberpunk dark theme - single theme, no light mode */
-    --background: 222 47% 8%;
-    --foreground: 160 100% 75%;
-    --card: 220 40% 10%;
-    --card-foreground: 160 100% 75%;
-    --popover: 220 40% 10%;
-    --popover-foreground: 160 100% 75%;
-    --primary: 160 100% 50%;
-    --primary-foreground: 222 47% 8%;
-    --secondary: 220 30% 16%;
-    --secondary-foreground: 180 60% 70%;
-    --muted: 220 30% 14%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 45 100% 55%;
-    --accent-foreground: 222 47% 8%;
-    --destructive: 0 80% 55%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 215 30% 20%;
-    --input: 215 30% 20%;
-    --ring: 160 100% 50%;
-    --chart-1: 160 100% 50%;
-    --chart-2: 180 100% 50%;
-    --chart-3: 45 100% 55%;
-    --chart-4: 0 80% 55%;
-    --chart-5: 270 80% 60%;
-    --radius: 0.75rem;
-    /* Custom cyberpunk tokens */
-    --neon-green: 160 100% 50%;
-    --neon-cyan: 180 100% 50%;
-    --neon-amber: 45 100% 55%;
-    --neon-red: 0 80% 55%;
+    --background: 0 0% 100%;
+    --foreground: 220 15% 15%;
+    --card: 0 0% 99%;
+    --card-foreground: 220 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+    --primary: 220 65% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 10% 95%;
+    --secondary-foreground: 220 15% 25%;
+    --muted: 220 10% 94%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 220 10% 92%;
+    --accent-foreground: 220 15% 15%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 10% 88%;
+    --input: 220 10% 88%;
+    --ring: 220 65% 45%;
+    --chart-1: 220 65% 45%;
+    --chart-2: 160 50% 40%;
+    --chart-3: 45 80% 50%;
+    --chart-4: 0 70% 50%;
+    --chart-5: 270 50% 50%;
+    --radius: 0.5rem;
+    --bit-on: 220 65% 45%;
+    --bit-tap: 25 85% 55%;
+    --encrypt-color: 0 70% 50%;
+    --decrypt-color: 160 50% 40%;
   }
 }
 
@@ -53,69 +51,11 @@
   }
 }
 
-/* Cyberpunk glow effects */
-.glow-green {
-  box-shadow: 0 0 8px hsl(160 100% 50% / 0.3), 0 0 20px hsl(160 100% 50% / 0.1);
-}
-.glow-cyan {
-  box-shadow: 0 0 8px hsl(180 100% 50% / 0.3), 0 0 20px hsl(180 100% 50% / 0.1);
-}
-.glow-amber {
-  box-shadow: 0 0 8px hsl(45 100% 55% / 0.3), 0 0 20px hsl(45 100% 55% / 0.1);
-}
-.glow-red {
-  box-shadow: 0 0 8px hsl(0 80% 55% / 0.3), 0 0 20px hsl(0 80% 55% / 0.1);
-}
-
-.text-glow-green {
-  text-shadow: 0 0 6px hsl(160 100% 50% / 0.5);
-}
-.text-glow-cyan {
-  text-shadow: 0 0 6px hsl(180 100% 50% / 0.5);
-}
-.text-glow-amber {
-  text-shadow: 0 0 6px hsl(45 100% 55% / 0.5);
-}
-
-/* Chip / PCB card style */
-.chip-card {
-  @apply rounded-lg border border-border bg-card p-4;
-  background-image: 
-    linear-gradient(hsl(160 100% 50% / 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(160 100% 50% / 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* Seven segment display styling */
-.segment-on {
-  fill: hsl(160, 100%, 50%);
-  filter: drop-shadow(0 0 4px hsl(160 100% 50% / 0.6));
-}
-.segment-off {
-  fill: hsl(220, 30%, 14%);
-}
-
 /* Bit cell animation */
 @keyframes bitPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
 }
 .bit-pulse {
-  animation: bitPulse 0.4s ease-in-out;
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: hsl(220, 40%, 10%);
-}
-::-webkit-scrollbar-thumb {
-  background: hsl(215, 30%, 25%);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(160, 100%, 50%);
+  animation: bitPulse 0.3s ease-in-out;
 }

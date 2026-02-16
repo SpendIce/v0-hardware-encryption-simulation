@@ -3,21 +3,14 @@
 /**
  * Seven Segment Display
  *
- * Virtual 7-segment display component that renders an 8-bit value.
- * Displays the ASCII character representation and binary/hex values.
- * Segment mapping follows standard a-g segments.
- *
+ * Segment layout:
  *  aaaa
  * f    b
- * f    b
  *  gggg
- * e    c
  * e    c
  *  dddd
  */
 
-// Map ASCII characters to segments [a,b,c,d,e,f,g]
-// 1 = segment ON, 0 = segment OFF
 const CHAR_SEGMENTS: Record<string, number[]> = {
   "0": [1, 1, 1, 1, 1, 1, 0],
   "1": [0, 1, 1, 0, 0, 0, 0],
@@ -39,9 +32,9 @@ const CHAR_SEGMENTS: Record<string, number[]> = {
   H: [0, 1, 1, 0, 1, 1, 1],
   I: [0, 0, 0, 0, 1, 1, 0],
   J: [0, 1, 1, 1, 0, 0, 0],
-  K: [0, 1, 1, 0, 1, 1, 1], // approximation
+  K: [0, 1, 1, 0, 1, 1, 1],
   L: [0, 0, 0, 1, 1, 1, 0],
-  M: [1, 1, 1, 0, 1, 1, 0], // approximation
+  M: [1, 1, 1, 0, 1, 1, 0],
   N: [0, 0, 1, 0, 1, 0, 1],
   O: [1, 1, 1, 1, 1, 1, 0],
   P: [1, 1, 0, 0, 1, 1, 1],
@@ -50,21 +43,19 @@ const CHAR_SEGMENTS: Record<string, number[]> = {
   S: [1, 0, 1, 1, 0, 1, 1],
   T: [0, 0, 0, 1, 1, 1, 1],
   U: [0, 1, 1, 1, 1, 1, 0],
-  V: [0, 1, 1, 1, 1, 1, 0], // same as U
-  W: [0, 1, 1, 1, 1, 1, 0], // approximation
-  X: [0, 1, 1, 0, 1, 1, 1], // same as H
+  V: [0, 1, 1, 1, 1, 1, 0],
+  W: [0, 1, 1, 1, 1, 1, 0],
+  X: [0, 1, 1, 0, 1, 1, 1],
   Y: [0, 1, 1, 1, 0, 1, 1],
-  Z: [1, 1, 0, 1, 1, 0, 1], // same as 2
+  Z: [1, 1, 0, 1, 1, 0, 1],
   " ": [0, 0, 0, 0, 0, 0, 0],
   "-": [0, 0, 0, 0, 0, 0, 1],
   "?": [1, 1, 0, 0, 1, 0, 1],
 };
 
 function getSegments(value: number): number[] {
-  // If valid printable ASCII, look up segments
   const ch = String.fromCharCode(value).toUpperCase();
   if (CHAR_SEGMENTS[ch]) return CHAR_SEGMENTS[ch];
-  // If not found, show all segments as "random" pattern from the value
   return [
     (value >> 0) & 1,
     (value >> 1) & 1,
@@ -77,126 +68,94 @@ function getSegments(value: number): number[] {
 }
 
 interface SevenSegmentDisplayProps {
-  value: number; // 0-255 (8-bit)
+  value: number;
   label?: string;
-  color?: "green" | "cyan" | "amber" | "red";
-  size?: "sm" | "md";
+  color?: "blue" | "red" | "green";
 }
 
 const COLOR_MAP = {
-  green: {
-    on: "hsl(160, 100%, 50%)",
-    glow: "hsl(160, 100%, 50%)",
-    off: "hsl(220, 30%, 14%)",
-    text: "text-neon-green",
-    border: "border-neon-green/30",
-    glowClass: "glow-green",
-  },
-  cyan: {
-    on: "hsl(180, 100%, 50%)",
-    glow: "hsl(180, 100%, 50%)",
-    off: "hsl(220, 30%, 14%)",
-    text: "text-neon-cyan",
-    border: "border-neon-cyan/30",
-    glowClass: "glow-cyan",
-  },
-  amber: {
-    on: "hsl(45, 100%, 55%)",
-    glow: "hsl(45, 100%, 55%)",
-    off: "hsl(220, 30%, 14%)",
-    text: "text-neon-amber",
-    border: "border-neon-amber/30",
-    glowClass: "glow-amber",
+  blue: {
+    on: "hsl(220, 65%, 45%)",
+    off: "hsl(220, 10%, 90%)",
   },
   red: {
-    on: "hsl(0, 80%, 55%)",
-    glow: "hsl(0, 80%, 55%)",
-    off: "hsl(220, 30%, 14%)",
-    text: "text-neon-red",
-    border: "border-neon-red/30",
-    glowClass: "glow-red",
+    on: "hsl(0, 70%, 50%)",
+    off: "hsl(0, 10%, 90%)",
+  },
+  green: {
+    on: "hsl(160, 50%, 40%)",
+    off: "hsl(160, 10%, 90%)",
   },
 };
 
 export default function SevenSegmentDisplay({
   value,
   label,
-  color = "green",
-  size = "md",
+  color = "blue",
 }: SevenSegmentDisplayProps) {
   const segments = getSegments(value);
   const c = COLOR_MAP[color];
-  const w = size === "sm" ? 60 : 80;
-  const h = size === "sm" ? 90 : 120;
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-1">
       {label && (
-        <span className={`text-xs font-bold ${c.text}`}>{label}</span>
+        <span className="text-xs font-bold text-foreground">{label}</span>
       )}
-      <div
-        className={`chip-card ${c.border} ${c.glowClass} flex flex-col items-center p-3`}
-      >
+      <div className="rounded-lg border border-border bg-card flex flex-col items-center p-3">
         <svg
-          width={w}
-          height={h}
+          width={70}
+          height={100}
           viewBox="0 0 80 120"
-          className="drop-shadow-lg"
-          aria-label={`Display showing ${String.fromCharCode(value) || value}`}
+          aria-label={`Display: ${
+            value >= 32 && value <= 126
+              ? String.fromCharCode(value)
+              : `0x${value.toString(16).toUpperCase().padStart(2, "0")}`
+          }`}
         >
-          {/* Background */}
-          <rect x="0" y="0" width="80" height="120" rx="4" fill="hsl(220, 40%, 8%)" />
+          <rect x="0" y="0" width="80" height="120" rx="4" fill="hsl(220, 15%, 96%)" />
 
-          {/* Segment A (top horizontal) */}
+          {/* Segment A (top) */}
           <polygon
             points="18,8 62,8 58,16 22,16"
             fill={segments[0] ? c.on : c.off}
-            style={segments[0] ? { filter: `drop-shadow(0 0 4px ${c.glow})` } : {}}
           />
-          {/* Segment B (top-right vertical) */}
+          {/* Segment B (top-right) */}
           <polygon
             points="64,10 64,54 56,50 56,18"
             fill={segments[1] ? c.on : c.off}
-            style={segments[1] ? { filter: `drop-shadow(0 0 4px ${c.glow})` } : {}}
           />
-          {/* Segment C (bottom-right vertical) */}
+          {/* Segment C (bottom-right) */}
           <polygon
             points="64,66 64,110 56,102 56,70"
             fill={segments[2] ? c.on : c.off}
-            style={segments[2] ? { filter: `drop-shadow(0 0 4px ${c.glow})` } : {}}
           />
-          {/* Segment D (bottom horizontal) */}
+          {/* Segment D (bottom) */}
           <polygon
             points="18,112 62,112 58,104 22,104"
             fill={segments[3] ? c.on : c.off}
-            style={segments[3] ? { filter: `drop-shadow(0 0 4px ${c.glow})` } : {}}
           />
-          {/* Segment E (bottom-left vertical) */}
+          {/* Segment E (bottom-left) */}
           <polygon
             points="16,66 16,110 24,102 24,70"
             fill={segments[4] ? c.on : c.off}
-            style={segments[4] ? { filter: `drop-shadow(0 0 4px ${c.glow})` } : {}}
           />
-          {/* Segment F (top-left vertical) */}
+          {/* Segment F (top-left) */}
           <polygon
             points="16,10 16,54 24,50 24,18"
             fill={segments[5] ? c.on : c.off}
-            style={segments[5] ? { filter: `drop-shadow(0 0 4px ${c.glow})` } : {}}
           />
-          {/* Segment G (middle horizontal) */}
+          {/* Segment G (middle) */}
           <polygon
             points="20,57 24,53 56,53 60,57 56,61 24,61"
             fill={segments[6] ? c.on : c.off}
-            style={segments[6] ? { filter: `drop-shadow(0 0 4px ${c.glow})` } : {}}
           />
         </svg>
 
-        {/* Value display */}
-        <div className="flex flex-col items-center mt-2 gap-0.5">
-          <span className={`text-xs font-mono ${c.text}`}>
+        <div className="flex flex-col items-center mt-1 gap-0.5">
+          <span className="text-sm font-mono font-bold text-foreground">
             {value >= 32 && value <= 126
               ? `'${String.fromCharCode(value)}'`
-              : "N/A"}
+              : "---"}
           </span>
           <span className="text-[10px] text-muted-foreground font-mono">
             0x{value.toString(16).toUpperCase().padStart(2, "0")} |{" "}
