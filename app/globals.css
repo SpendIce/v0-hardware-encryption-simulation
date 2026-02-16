@@ -10,35 +10,26 @@
 
 @layer base {
   :root {
-    --background: 222 30% 8%;
-    --foreground: 210 15% 85%;
-    --card: 222 25% 11%;
-    --card-foreground: 210 15% 85%;
-    --popover: 222 25% 11%;
-    --popover-foreground: 210 15% 85%;
-    --primary: 210 60% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 222 20% 16%;
-    --secondary-foreground: 210 15% 75%;
-    --muted: 222 20% 14%;
-    --muted-foreground: 215 15% 50%;
-    --accent: 222 20% 18%;
-    --accent-foreground: 210 15% 85%;
-    --destructive: 0 65% 55%;
+    --background: 220 20% 10%;
+    --foreground: 210 20% 92%;
+    --card: 220 18% 13%;
+    --card-foreground: 210 20% 92%;
+    --popover: 220 18% 13%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 210 65% 58%;
+    --primary-foreground: 220 20% 10%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 210 20% 80%;
+    --muted: 220 15% 16%;
+    --muted-foreground: 215 12% 55%;
+    --accent: 220 15% 20%;
+    --accent-foreground: 210 20% 92%;
+    --destructive: 0 60% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 222 15% 20%;
-    --input: 222 15% 20%;
-    --ring: 210 60% 55%;
-    --chart-1: 210 60% 55%;
-    --chart-2: 160 45% 45%;
-    --chart-3: 40 75% 55%;
-    --chart-4: 0 65% 55%;
-    --chart-5: 270 45% 55%;
+    --border: 220 12% 22%;
+    --input: 220 12% 22%;
+    --ring: 210 65% 58%;
     --radius: 0.5rem;
-    --bit-on: 210 60% 55%;
-    --bit-tap: 30 80% 55%;
-    --encrypt-color: 0 65% 55%;
-    --decrypt-color: 160 45% 45%;
   }
 }
 
@@ -51,10 +42,9 @@
   }
 }
 
-/* Bit cell animation */
 @keyframes bitPulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  50% { opacity: 0.65; }
 }
 .bit-pulse {
   animation: bitPulse 0.3s ease-in-out;
