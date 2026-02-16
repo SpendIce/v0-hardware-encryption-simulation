@@ -75,16 +75,16 @@ interface SevenSegmentDisplayProps {
 
 const COLOR_MAP = {
   blue: {
-    on: "hsl(220, 65%, 45%)",
-    off: "hsl(220, 10%, 90%)",
+    on: "hsl(210, 60%, 55%)",
+    off: "hsl(222, 15%, 18%)",
   },
   red: {
-    on: "hsl(0, 70%, 50%)",
-    off: "hsl(0, 10%, 90%)",
+    on: "hsl(0, 65%, 55%)",
+    off: "hsl(222, 15%, 18%)",
   },
   green: {
-    on: "hsl(160, 50%, 40%)",
-    off: "hsl(160, 10%, 90%)",
+    on: "hsl(160, 45%, 45%)",
+    off: "hsl(222, 15%, 18%)",
   },
 };
 
@@ -112,7 +112,7 @@ export default function SevenSegmentDisplay({
               : `0x${value.toString(16).toUpperCase().padStart(2, "0")}`
           }`}
         >
-          <rect x="0" y="0" width="80" height="120" rx="4" fill="hsl(220, 15%, 96%)" />
+          <rect x="0" y="0" width="80" height="120" rx="4" fill="hsl(222, 25%, 11%)" />
 
           {/* Segment A (top) */}
           <polygon

@@ -39,13 +39,13 @@ export default function LfsrVisualizer() {
       {/* Register visualization */}
       <div className="rounded-lg border border-border bg-card p-4 overflow-x-auto">
         <div className="flex items-center gap-1 mb-1">
-          <span className="text-xs text-muted-foreground font-bold mr-1 w-16 text-right shrink-0">
-            {"Salida <-"}
+          <span className="text-xs text-muted-foreground font-bold mr-1 w-20 text-right shrink-0">
+            {"Entrada ->"}
           </span>
           <div className="flex gap-px">
-            {/* Display bits from MSB (31) to LSB (0) -- left to right = bit 31 down to bit 0 */}
+            {/* Display bits from LSB (0) to MSB (31) -- left to right = bit 0 up to bit 31 */}
             {Array.from({ length: LFSR_SIZE })
-              .map((_, i) => LFSR_SIZE - 1 - i)
+              .map((_, i) => i)
               .map((bitIndex) => {
                 const isTap = (LFSR_TAPS as readonly number[]).includes(bitIndex);
                 const bitVal = bits[bitIndex];
@@ -66,10 +66,10 @@ export default function LfsrVisualizer() {
                         ${
                           isTap
                             ? bitVal
-                              ? "border-orange-400 bg-orange-50 text-orange-700"
-                              : "border-orange-300 bg-background text-orange-400"
+                              ? "border-orange-400 bg-orange-400/15 text-orange-300"
+                              : "border-orange-400/40 bg-background text-orange-400/60"
                             : bitVal
-                            ? "border-primary bg-primary/10 text-primary"
+                            ? "border-primary bg-primary/15 text-primary"
                             : "border-border bg-background text-muted-foreground"
                         }
                         ${bitVal ? "bit-pulse" : ""}
@@ -89,8 +89,8 @@ export default function LfsrVisualizer() {
                 );
               })}
           </div>
-          <span className="text-xs text-muted-foreground font-bold ml-1 w-20 shrink-0">
-            {"-> Entrada"}
+          <span className="text-xs text-muted-foreground font-bold ml-1 w-16 shrink-0">
+            {"-> Salida"}
           </span>
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function LfsrVisualizer() {
                     flex h-7 w-7 items-center justify-center rounded border font-bold text-xs
                     ${
                       tapBitValues[i]
-                        ? "border-orange-400 bg-orange-50 text-orange-700"
+                        ? "border-orange-400 bg-orange-400/15 text-orange-300"
                         : "border-border bg-background text-muted-foreground"
                     }
                   `}
@@ -175,7 +175,7 @@ export default function LfsrVisualizer() {
         <button
           onClick={handleStep}
           disabled={lfsr.isRunning}
-          className="flex items-center gap-2 rounded-md border border-primary bg-primary/5 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 rounded-md border border-primary bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/20 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <ChevronRight className="h-4 w-4" />
           Step
@@ -184,8 +184,8 @@ export default function LfsrVisualizer() {
           onClick={lfsr.toggleAutoRun}
           className={`flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-bold transition-colors ${
             lfsr.isRunning
-              ? "border-destructive bg-destructive/5 text-destructive hover:bg-destructive/10"
-              : "border-primary bg-primary/5 text-primary hover:bg-primary/10"
+              ? "border-destructive bg-destructive/10 text-destructive hover:bg-destructive/20"
+              : "border-primary bg-primary/10 text-primary hover:bg-primary/20"
           }`}
         >
           {lfsr.isRunning ? (
@@ -197,7 +197,7 @@ export default function LfsrVisualizer() {
         </button>
         <button
           onClick={lfsr.reset}
-          className="flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-bold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          className="flex items-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-bold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         >
           <RotateCcw className="h-4 w-4" />
           Reset

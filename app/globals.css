@@ -10,35 +10,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 15% 15%;
-    --card: 0 0% 99%;
-    --card-foreground: 220 15% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
-    --primary: 220 65% 45%;
+    --background: 222 30% 8%;
+    --foreground: 210 15% 85%;
+    --card: 222 25% 11%;
+    --card-foreground: 210 15% 85%;
+    --popover: 222 25% 11%;
+    --popover-foreground: 210 15% 85%;
+    --primary: 210 60% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 10% 95%;
-    --secondary-foreground: 220 15% 25%;
-    --muted: 220 10% 94%;
-    --muted-foreground: 220 10% 45%;
-    --accent: 220 10% 92%;
-    --accent-foreground: 220 15% 15%;
-    --destructive: 0 70% 50%;
+    --secondary: 222 20% 16%;
+    --secondary-foreground: 210 15% 75%;
+    --muted: 222 20% 14%;
+    --muted-foreground: 215 15% 50%;
+    --accent: 222 20% 18%;
+    --accent-foreground: 210 15% 85%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 10% 88%;
-    --input: 220 10% 88%;
-    --ring: 220 65% 45%;
-    --chart-1: 220 65% 45%;
-    --chart-2: 160 50% 40%;
-    --chart-3: 45 80% 50%;
-    --chart-4: 0 70% 50%;
-    --chart-5: 270 50% 50%;
+    --border: 222 15% 20%;
+    --input: 222 15% 20%;
+    --ring: 210 60% 55%;
+    --chart-1: 210 60% 55%;
+    --chart-2: 160 45% 45%;
+    --chart-3: 40 75% 55%;
+    --chart-4: 0 65% 55%;
+    --chart-5: 270 45% 55%;
     --radius: 0.5rem;
-    --bit-on: 220 65% 45%;
-    --bit-tap: 25 85% 55%;
-    --encrypt-color: 0 70% 50%;
-    --decrypt-color: 160 50% 40%;
+    --bit-on: 210 60% 55%;
+    --bit-tap: 30 80% 55%;
+    --encrypt-color: 0 65% 55%;
+    --decrypt-color: 160 45% 45%;
   }
 }
 
