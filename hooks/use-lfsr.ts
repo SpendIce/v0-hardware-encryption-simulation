@@ -64,11 +64,11 @@ export function lfsrStep(state: number): {
   return { newState, outputBit, feedbackBit };
 }
 
-/** Default seed (nonzero to avoid stuck state) */
-const DEFAULT_SEED = 0b10110011100011110000111110000011;
+/** Default seed: all zeros */
+const DEFAULT_SEED = 0;
 
 export function useLfsr(initialSeed?: number) {
-  const seed = initialSeed ?? DEFAULT_SEED;
+  const seed = initialSeed !== undefined ? initialSeed : DEFAULT_SEED;
   const [state, setState] = useState<number>(seed >>> 0);
   const [stepCount, setStepCount] = useState(0);
   const [lastFeedback, setLastFeedback] = useState<number | null>(null);
@@ -102,6 +102,15 @@ export function useLfsr(initialSeed?: number) {
     setIsRunning(false);
   }, [seed]);
 
+  const setSeed = useCallback((newSeed: number) => {
+    setState(newSeed >>> 0);
+    setStepCount(0);
+    setLastFeedback(null);
+    setLastOutput(null);
+    setOutputStream([]);
+    setIsRunning(false);
+  }, []);
+
   const toggleAutoRun = useCallback(() => {
     setIsRunning((prev) => !prev);
   }, []);
@@ -133,5 +142,6 @@ export function useLfsr(initialSeed?: number) {
     setSpeed,
     setState,
     setStepCount,
+    setSeed,
   };
 }
